@@ -1,0 +1,25 @@
+.file-card {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  padding: 5px;
+  border: 1px solid  #919398;
+  border-radius: 8px;
+}
+
+div {
+  margin-top: 5px;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+button {
+  text-decoration: none;
+  border:none;
+  border-radius: 3px;
+  padding: 5px;
+}
