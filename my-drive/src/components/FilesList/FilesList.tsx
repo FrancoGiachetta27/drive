@@ -11,7 +11,7 @@ function FilesList() {
     const [files,setFiles] = useState<Array<File>>();
 
     useEffect(() => {
-        fetch('http://localhost:8000/files')
+        fetch('http://localhost:8000/api/files')
         .then(res => { return res.json() })
         .then(data => { setFiles(data) });
     },[]);
