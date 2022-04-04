@@ -45,6 +45,16 @@ impl FileStruct {
             updated: Utc::now()
         }
     }
+
+    pub fn update(updates:InsertableFile, file:&FileStruct) -> Self {
+        Self {
+            id: file.id,
+            name: updates.name,
+            data: updates.data,
+            created: file.created,
+            updated: Utc::now()
+        }
+    }
 }
 
 impl ResponseFile {

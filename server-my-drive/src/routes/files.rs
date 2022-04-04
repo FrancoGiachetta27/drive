@@ -99,20 +99,28 @@ pub async fn update(name:String, data:Form<DataStruct<'_>>) -> ApiResponse {
         data: buffer[..].to_vec()
     };
 
-    let to_serealized = bson::to_bson(&replasement).unwrap();
+    let to_update:FileStruct = bson::from_bson(Bson::Document(filesDB.find_one(
+        Some( doc! { "name":&name } ),
+        None).await.unwrap().expect("Document not found"))
+    ).unwrap();
+
+    let to_serealized = bson::to_bson(&FileStruct::update(replasement, &to_update)).unwrap();
     let to_document = to_serealized.as_document().unwrap();
 
     let update_to = filesDB.replace_one(doc! {
         "name":name
-    },to_document,None);
+    },to_document,None).await;
 
-    let updated_data:FileStruct = bson::from_bson(update_to.await.unwrap().upserted_id.unwrap()).unwrap();
+    println!("update: {:?}", update_to);
 
-    ApiResponse::ok(json!(ResponseFile::from_file(updated_data)))
+    ApiResponse::ok(
+        json!(ResponseFile::from_file(bson::from_bson::<FileStruct>(
+            Bson::Document(to_document.to_owned())).unwrap()))
+    )
 }
 
-#[delete("/files/<name>")]
-pub async fn delete(name: String) -> ApiResponse {
-
-    ApiResponse::ok(json!())
-}
+// #[delete("/files/<name>")]
+// pub async fn delete(name: String) -> ApiResponse {
+//
+//     ApiResponse::ok(json!())
+// }
