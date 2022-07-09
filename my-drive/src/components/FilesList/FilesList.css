@@ -1,7 +1,0 @@
-.files-list {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: left;
-  margin: 25px;
-}
