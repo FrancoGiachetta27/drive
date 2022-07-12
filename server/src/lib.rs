@@ -5,7 +5,6 @@
 mod routes;
 mod database;
 
-
 pub fn rocket_builder() -> Rocket<Build> {
     rocket::build()
         .mount("/api", routes![
