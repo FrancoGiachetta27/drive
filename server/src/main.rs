@@ -3,5 +3,5 @@ use tokio;
 
 #[tokio::main]
 async fn main() {
-    rocket_builder().launch().await.unwrap();
+    rocket_builder().unwrap().launch().await.unwrap();
 }
