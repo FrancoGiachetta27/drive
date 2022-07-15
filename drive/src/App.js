@@ -4,22 +4,25 @@ import { useEffect, useState } from 'react';
 function App() {
   const [files, setFiles] = useState(null)
 
-  // useEffect(() => {
-    fetch("http://localhost:8000/api/files").then(res => {
-      return res.json()
-    })
-    .then(data => {
-      console.log("hola")
+  useEffect(() => {
+    const fetchFiles = async () => {
+      fetch("http://127.0.0.1:8000/api/files")
+      .then(res => {
+        return res.json()
+      })
+      .then(data => {
+        setFiles(data)
+      })
+    }
 
-      setFiles(data)
-    })
-  // },[])
+    fetchFiles()
+  },[files])
 
   return (
     <div className="App">
-      { files.map((file) => (
-          <div>{file.name}</div>
-      )) }
+      {files && files.map((file) => (
+        <div>{file.name}</div>
+      ))}
     </div>
   )
 }
