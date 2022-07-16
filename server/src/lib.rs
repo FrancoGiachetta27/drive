@@ -1,8 +1,7 @@
 #![allow(unused_attributes)]
 
-use std::{ error::Error };
+use std::error::Error;
 #[macro_use] use rocket::*;
-use rocket_cors::{AllowedHeaders, AllowedOrigins};
 
 mod routes;
 mod database;
@@ -14,7 +13,8 @@ pub fn rocket_builder() -> Result<Rocket<Build>, Box<dyn Error>>{
         .mount("/api", routes![
             routes::files::index,
             routes::files::store,
-            routes::files::update
+            routes::files::update,
         ])
     )
 }
+

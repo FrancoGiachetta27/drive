@@ -44,6 +44,8 @@ pub async fn store(data:Form<DataStruct<'_>>) -> ApiResponse {
     let filesDB:Collection<Document> = client.database("FilesDB").collection("files");
     let mut files:Vec<FileStruct> = vec![];
 
+    println!("Here {:?}", &data);
+
     for f in data.files.iter() {
         //get the file from the response body
         let getFile = NamedFile::open(f.path().unwrap()).await.unwrap();
@@ -51,13 +53,14 @@ pub async fn store(data:Form<DataStruct<'_>>) -> ApiResponse {
 
         //get the buffer to read the content of the file
         let mut buffer = BytesMut::with_capacity(5000000000);
-        file.read_buf(&mut buffer).await.unwrap();
 
+        file.read_buf(&mut buffer).await.unwrap();
 
         let fileData = &file.metadata();
         let response_ = InsertableFile {
             name:format!("{}",f.name().unwrap()),
-            data: buffer[..].to_vec()
+            data: buffer[..].to_vec(),
+            extension: String::from("")
         };
 
         // transfor the data to bason for mongo to understand it
@@ -85,6 +88,14 @@ pub async fn update(name:String, data:Form<DataStruct<'_>>) -> ApiResponse {
     let client:Client = connection().await.unwrap();
     let filesDB:Collection<Document> = client.database("FilesDB").collection("files");
 
+    let extension = match data.files[0].path() {
+        Some(p) => p.extension().unwrap().to_os_string().into_string().unwrap(),
+        None => {
+            println!("Couldn't get the file's path");
+
+            String::from("")
+        }
+    };
     //get the file from the response body
     let getFile = NamedFile::open(data.files[0].path().unwrap()).await.unwrap();
     let mut file = getFile.take_file();
@@ -96,7 +107,8 @@ pub async fn update(name:String, data:Form<DataStruct<'_>>) -> ApiResponse {
 
     let replasement = InsertableFile {
         name:format!("{}",data.files[0].name().unwrap()),
-        data: buffer[..].to_vec()
+        data: buffer[..].to_vec(),
+        extension: extension
     };
 
     let to_update:FileStruct = bson::from_bson(Bson::Document(filesDB.find_one(

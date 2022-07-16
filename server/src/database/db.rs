@@ -14,6 +14,7 @@ pub struct FileStruct {
     id: Option<ObjectId>,
     name:String,
     data:Vec<u8>,
+    extension: String,
 # [serde(with = "bson::serde_helpers::chrono_datetime_as_bson_datetime")]
     created: DateTime<Utc>,
 # [serde(with = "bson::serde_helpers::chrono_datetime_as_bson_datetime")]
@@ -23,7 +24,8 @@ pub struct FileStruct {
 #[derive(Serialize, Deserialize)]
 pub struct InsertableFile {
     pub name:String,
-    pub data:Vec<u8>
+    pub data:Vec<u8>,
+    pub extension: String
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -31,6 +33,7 @@ pub struct ResponseFile {
     id: String,
     name: String,
     data:Vec<u8>,
+    extension: String,
     created: Option<String>,
     updated: String
 }
@@ -41,6 +44,7 @@ impl FileStruct {
             id: None,
             name: file.name,
             data:file.data,
+            extension: file.extension,
             created: Utc::now(),
             updated: Utc::now()
         }
@@ -51,6 +55,7 @@ impl FileStruct {
             id: file.id,
             name: updates.name,
             data: updates.data,
+            extension: file.extension.to_owned(),
             created: file.created,
             updated: Utc::now()
         }
@@ -63,6 +68,7 @@ pub fn from_file(file: FileStruct) -> Self {
             id :format!("{}", file.id.expect("expected name")),
             name:file.name,
             data:file.data,
+            extension: file.extension,
             created: None,
             updated: format!("{}", Utc::now())
         }
