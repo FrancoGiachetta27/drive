@@ -1,0 +1,11 @@
+.file-card {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  border: 1px solid black;
+}
+
+button {
+  text-decoration: none;
+  border: 0;
+}
