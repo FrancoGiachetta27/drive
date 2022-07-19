@@ -14,6 +14,7 @@ pub fn rocket_builder() -> Result<Rocket<Build>, Box<dyn Error>>{
             routes::files::index,
             routes::files::store,
             routes::files::update,
+            routes::files::delete
         ])
     )
 }

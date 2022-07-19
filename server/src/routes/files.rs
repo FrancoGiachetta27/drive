@@ -1,32 +1,27 @@
-use std:: {
-    fs::File,
-    io::BufReader, path::PathBuf, clone
-};
-use bson::to_document;
-use futures::{ TryStreamExt, stream, StreamExt };
+use futures::TryStreamExt;
 use rocket::{
     *,
     fs::{ TempFile, NamedFile },
     form::{ FromForm, Form },
-    serde::{ Serialize, Deserialize },
-    serde::json::{ serde_json::json, Json, Value },
+    serde::json::serde_json::json,
 };
 use tokio::io::AsyncReadExt;
 use mongodb::{
     bson,
-    bson::{ doc, Document, Bson },
+    bson::{ doc, Document, Bson, oid::ObjectId },
     Client,
     Collection,
 };
 use bytes::BytesMut;
 
-use crate::database::{ mongo_connection::connection };
+use crate::database::mongo_connection::connection;
 use crate::database::db::{ InsertableFile, ResponseFile, FileStruct };
 use crate::routes::responses::ApiResponse;
 
 #[derive(FromForm,Debug)]
 pub struct DataStruct<'a> {
     files: Vec<TempFile<'a>>,
+    extension:Vec<String>
 }
 
 #[get("/files")]
@@ -46,7 +41,7 @@ pub async fn store(data:Form<DataStruct<'_>>) -> ApiResponse {
 
     println!("Here {:?}", &data);
 
-    for f in data.files.iter() {
+    for (i,f) in data.files.iter().enumerate() {
         //get the file from the response body
         let getFile = NamedFile::open(f.path().unwrap()).await.unwrap();
         let mut file = getFile.take_file();
@@ -56,11 +51,10 @@ pub async fn store(data:Form<DataStruct<'_>>) -> ApiResponse {
 
         file.read_buf(&mut buffer).await.unwrap();
 
-        let fileData = &file.metadata();
         let response_ = InsertableFile {
             name:format!("{}",f.name().unwrap()),
             data: buffer[..].to_vec(),
-            extension: String::from("")
+            extension: data.extension[i].to_owned()
         };
 
         // transfor the data to bason for mongo to understand it
@@ -83,19 +77,11 @@ pub async fn store(data:Form<DataStruct<'_>>) -> ApiResponse {
     ApiResponse::ok(json!(files))
 }
 
-#[put("/files/<name>", data="<data>")]
-pub async fn update(name:String, data:Form<DataStruct<'_>>) -> ApiResponse {
+#[put("/files/<id>", data="<data>")]
+pub async fn update(id:String, data:Form<DataStruct<'_>>) -> ApiResponse {
     let client:Client = connection().await.unwrap();
     let filesDB:Collection<Document> = client.database("FilesDB").collection("files");
 
-    let extension = match data.files[0].path() {
-        Some(p) => p.extension().unwrap().to_os_string().into_string().unwrap(),
-        None => {
-            println!("Couldn't get the file's path");
-
-            String::from("")
-        }
-    };
     //get the file from the response body
     let getFile = NamedFile::open(data.files[0].path().unwrap()).await.unwrap();
     let mut file = getFile.take_file();
@@ -108,11 +94,11 @@ pub async fn update(name:String, data:Form<DataStruct<'_>>) -> ApiResponse {
     let replasement = InsertableFile {
         name:format!("{}",data.files[0].name().unwrap()),
         data: buffer[..].to_vec(),
-        extension: extension
+        extension: data.extension[0].to_owned()
     };
 
     let to_update:FileStruct = bson::from_bson(Bson::Document(filesDB.find_one(
-        Some( doc! { "name":&name } ),
+        Some( doc! { "_id": ObjectId::parse_str(&id).unwrap() }),
         None).await.unwrap().expect("Document not found"))
     ).unwrap();
 
@@ -120,8 +106,9 @@ pub async fn update(name:String, data:Form<DataStruct<'_>>) -> ApiResponse {
     let to_document = to_serealized.as_document().unwrap();
 
     let update_to = filesDB.replace_one(doc! {
-        "name":name
-    },to_document,None).await;
+        "_id": ObjectId::parse_str(&id).unwrap() },
+        to_document,
+        None).await;
 
     println!("update: {:?}", update_to);
 
@@ -131,8 +118,14 @@ pub async fn update(name:String, data:Form<DataStruct<'_>>) -> ApiResponse {
     )
 }
 
-// #[delete("/files/<name>")]
-// pub async fn delete(name: String) -> ApiResponse {
-//
-//     ApiResponse::ok(json!())
-// }
+#[delete("/files/<id>")]
+pub async fn delete(id: String) -> ApiResponse {
+    let client:Client = connection().await.unwrap();
+    let files_db:Collection<Document> = client.database("FilesDB").collection("files");
+
+    let result = files_db.delete_one(doc!{
+        "_id": ObjectId::parse_str(id).unwrap() },
+        None).await.unwrap();
+
+    ApiResponse::ok(json!(result))
+}

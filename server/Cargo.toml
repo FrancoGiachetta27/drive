@@ -11,9 +11,8 @@ dotenv = "0.15.0"
 bytes = "1.1.0"
 bson = { version = "2", features = ["chrono-0_4"] }
 futures = "0.3.21"
-mongodb = "2.1.0"
+mongodb = "2.2.2"
 rocket = {version = "0.5.0-rc.1", features = ["json"] }
 multipart = "0.18.0"
 serde = { version = "1.0.136", features = ["derive"] }
 tokio = "1.17.0"
-rocket_cors = { git = "https://github.com/lawliet89/rocket_cors", branch = "master" }
