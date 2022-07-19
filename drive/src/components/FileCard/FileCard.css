@@ -1,11 +1,49 @@
 .file-card {
   display: flex;
   flex-direction: column;
+  border: 2px solid #C3C2CF;
   margin: 10px;
-  border: 1px solid black;
+  border-radius: 5px;
+  padding:5px;
+  width: 150px;
 }
 
-button {
-  text-decoration: none;
-  border: 0;
+.buttons {
+  display: flex;
+  justify-content: right;
+  outline: none;
+  border: none;
+  background: none;
+  margin-top: 8px;
 }
+
+.arrow,.bin {
+  margin: 5px;
+  margin-bottom: 2px;
+  border-radius: 8px;
+  padding: 2;
+  width: 5px;
+  height: 5px;
+  border: 0;
+  color: #FFFFFF;
+}
+
+.arrow {
+  color: #ACA9BB;
+}
+
+.arrow:hover {
+  color: #FFFFFF;
+  background-color: #3D5AE1;
+}
+
+.bin {
+  color: #ACA9BB;
+}
+
+.bin:hover {
+  color: #FFFFFF;
+  background-color: #D30032;
+}
+
+
