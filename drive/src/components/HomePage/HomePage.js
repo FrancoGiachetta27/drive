@@ -8,12 +8,13 @@ const HomePage = props => {
 
   useEffect(() => {
     const fetchFiles = async () => {
-      axios.get("http://127.0.0.1:8000/api/files")
-        .then(res => {
-          setFiles(res.data)
+      fetch('https://127.0.0.1:8000/api/files/')
+        .then(res => {return res.json()})
+        .then((data) => {
+          setFiles(data)
         })
-        .catch(err => {
-          console.log("Error:", err)
+        .catch((error) => {
+          console.error('Error:', error)
         })
     }
 

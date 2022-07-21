@@ -1,29 +1,10 @@
 import {useForm} from 'react-hook-form'
-import axios from 'axios'    
+import axios from 'axios'
 // import AddIcon from '@mui/icons-material/Add'
 import './Navbar.css'
 
 const Navbar = props => {
   const {register, handleSubmit} = useForm()
-
-  const onSubmit = (data) => {
-    console.log(data)
-    const formData = new FormData()
-
-    formData.append('files', data.files[0])
-    formData.append('extension', data.files[0].name.split('.').pop())
-
-    axios.post("http://127.0.0.1:8000/api/files/upload", {formData})
-      .then((response) => response.json())
-      .then((result) => {
-        console.log('Success:', result)
-      })
-      .catch((error) => {
-        console.error('Error:', error)
-      })
-
-    handleClose()
-  }
 
   const handleClick = (e) => {
     const openModalButtons = document.querySelectorAll('[data-modal-target]')
@@ -67,6 +48,23 @@ const Navbar = props => {
         overlay.classList.remove('active')
       })
     })
+  }
+
+  const onSubmit = (data) => {
+    handleClose()
+
+    const formData = new FormData()
+
+    formData.append('files', data.files[0])
+    formData.append('extension', data.files[0].name.split('.').pop())
+
+    axios.post("https://127.0.0.1:8000/api/files/upload", {formData})
+      .then((res) => {
+        console.log('Success:', res)
+      })
+      .catch((error) => {
+        console.error('Error:', error)
+      })
   }
 
   return (

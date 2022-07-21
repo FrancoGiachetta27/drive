@@ -1,11 +1,9 @@
 import download from 'downloadjs'
-import axios from 'axios';
-import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined'
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import './FileCard.css'
 
 const FileCard = (props) => {
-  console.log(props.file._id['$oid'])
   const handleDownload = async () => {
     const data = new Uint8Array(props.file.data)
     const file = new Blob([data])
@@ -14,10 +12,12 @@ const FileCard = (props) => {
   }
 
   const handleDelete = () => {
-    axios.delete('http://127.0.0.1:8000/api/files/' + props.file._id['$oid'], {
-      withCredentials: false
+    fetch('https://127.0.0.1:8000/api/files/' + props.file._id['$oid'], {
+      method: 'DELETE',
+      headers: {
+        'Content-type': 'application/json'
+      }
     })
-      .then((response) => response.json())
       .then((result) => {
         console.log('Success:', result)
       })
