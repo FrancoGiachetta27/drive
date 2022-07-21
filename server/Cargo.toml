@@ -12,7 +12,7 @@ bytes = "1.1.0"
 bson = { version = "2", features = ["chrono-0_4"] }
 futures = "0.3.21"
 mongodb = "2.2.2"
-rocket = {version = "0.5.0-rc.1", features = ["json"] }
-multipart = "0.18.0"
+rocket = { version = "0.5.0-rc.1", features = ["json","tls"] }
+rocket_contrib = { version = "0.4.11", features= ["helmet"] }
 serde = { version = "1.0.136", features = ["derive"] }
 tokio = "1.17.0"

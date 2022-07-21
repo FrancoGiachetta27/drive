@@ -1,4 +1,15 @@
 /target
+
 Cargo.lock
+
+#env
 .env
-mongo-cre.txt
+
+#mongodb credentials
+mongo-cre.txtenv
+
+#Rocket config
+Rocket.toml
+
+#credentials
+/cert

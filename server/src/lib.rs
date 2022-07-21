@@ -7,8 +7,9 @@ mod routes;
 mod database;
 mod middleware;
 
-pub fn rocket_builder() -> Result<Rocket<Build>, Box<dyn Error>>{
+pub fn rocket_builder() -> Result<Rocket<Build>, Box<dyn Error>> {
     Ok(rocket::build()
+        // .attach(SpaceHelmet::default())
         .attach(middleware::CORS)
         .mount("/api", routes![
             routes::files::index,
