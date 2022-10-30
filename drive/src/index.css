@@ -7,3 +7,8 @@ button {
   border: 0;
   text-decoration: none;
 }
+
+input {
+  text-decoration: none;
+  border: none;
+}
