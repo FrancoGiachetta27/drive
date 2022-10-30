@@ -65,7 +65,7 @@ impl FileStruct {
 impl ResponseFile {
 pub fn from_file(file: FileStruct) -> Self {
        Self {
-            id :format!("{}", file.id.expect("expected name")),
+            id :format!("{}", file.id.expect("name expected")),
             name:file.name,
             data:file.data,
             extension: file.extension,

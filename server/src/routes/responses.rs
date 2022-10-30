@@ -1,9 +1,9 @@
 use rocket::{
-    *,
-    serde::json::Value,
-    http::{ ContentType, Status },
+    http::{ContentType, Status},
     response,
-    response::{ Responder, Response },
+    response::{Responder, Response},
+    serde::json::Value,
+    *,
 };
 
 #[derive(Debug)]
@@ -13,17 +13,17 @@ pub struct ApiResponse {
 }
 
 impl ApiResponse {
-    pub fn ok(body:Value) -> Self {
+    pub fn ok(body: Value) -> Self {
         Self {
             status: Status::Ok,
-            body: body
+            body: body,
         }
     }
 
-    pub fn err(body:Value) -> Self {
+    pub fn err(body: Value) -> Self {
         Self {
             status: Status::InternalServerError,
-            body: body
+            body: body,
         }
     }
 }
